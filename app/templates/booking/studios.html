@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Available Studios{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Our Studios</h2>
+    
+    <div class="row">
+        {% for studio in studios %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if studio.image %}
+                <img src="{{ url_for('static', filename='uploads/studios/' + studio.image) }}" class="card-img-top" alt="{{ studio.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ studio.name }}</h5>
+                    <p class="card-text">{{ studio.description }}</p>
+                    <ul class="list-unstyled">
+                        <li><strong>Hourly Rate:</strong> ${{ "%.2f"|format(studio.hourly_rate) }}</li>
+                        <li><strong>Half Day Rate:</strong> ${{ "%.2f"|format(studio.half_day_rate) }}</li>
+                        <li><strong>Full Day Rate:</strong> ${{ "%.2f"|format(studio.full_day_rate) }}</li>
+                    </ul>
+                    <div class="equipment-list">
+                        <h6>Equipment:</h6>
+                        <p class="small">{{ studio.equipment }}</p>
+                    </div>
+                    <a href="{{ url_for('booking.book_studio', studio_id=studio.id) }}" class="btn btn-primary">Book Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

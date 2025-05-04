@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Process Payment{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Payment Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="booking-details mb-4">
+                        <h5>Booking Information</h5>
+                        <p><strong>Studio:</strong> {{ booking.studio.name }}</p>
+                        <p><strong>Date:</strong> {{ booking.start_time.strftime('%Y-%m-%d') }}</p>
+                        <p><strong>Time:</strong> {{ booking.start_time.strftime('%H:%M') }} - {{ booking.end_time.strftime('%H:%M') }}</p>
+                        <p><strong>Amount:</strong> ${{ "%.2f"|format(booking.total_amount) }}</p>
+                    </div>
+
+                    <form method="POST">
+                        <div class="mb-4">
+                            <h5>Select Payment Method</h5>
+                            <div class="list-group">
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="radio" name="payment_method" value="credit_card" required>
+                                    <i class="fas fa-credit-card"></i> Credit Card
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="radio" name="payment_method" value="mpesa" required>
+                                    <i class="fas fa-mobile-alt"></i> M-Pesa
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-1" type="radio" name="payment_method" value="paypal" required>
+                                    <i class="fab fa-paypal"></i> PayPal
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Process Payment</button>
+                            <a href="{{ url_for('user.bookings') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

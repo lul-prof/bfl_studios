@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Studios{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Manage Studios</h2>
+        </div>
+        <div class="col text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStudioModal">Add New Studio</button>
+        </div>
+    </div>
+
+    <!-- Studios List -->
+    <div class="row">
+        {% for studio in studios %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ studio.name }}</h5>
+                    <p class="card-text">{{ studio.description }}</p>
+                    <ul class="list-unstyled">
+                        <li>Hourly Rate: ${{ studio.hourly_rate }}</li>
+                        <li>Half Day: ${{ studio.half_day_rate }}</li>
+                        <li>Full Day: ${{ studio.full_day_rate }}</li>
+                    </ul>
+                    <p><strong>Equipment:</strong><br>{{ studio.equipment }}</p>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="studio-{{ studio.id }}-status" 
+                               {% if studio.is_available %}checked{% endif %}
+                               onchange="updateStudioStatus({{ studio.id }}, this.checked)">
+                        <label class="form-check-label" for="studio-{{ studio.id }}-status">Available</label>
+                    </div>
+                    <!-- Add this right after your container div 
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="successToast" class="toast" role="alert">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            Studio status updated successfully
+        </div>
+    </div>
+    
+    <div id="errorToast" class="toast" role="alert">
+        <div class="toast-header bg-danger text-white">
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            Failed to update studio status. Please try again.
+        </div>
+    </div>
+</div>
+-->
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Add Studio Modal -->
+    <div class="modal fade" id="addStudioModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Studio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Studio Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="hourly_rate" class="form-label">Hourly Rate ($)</label>
+                            <input type="number" class="form-control" id="hourly_rate" name="hourly_rate" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="half_day_rate" class="form-label">Half Day Rate ($)</label>
+                            <input type="number" class="form-control" id="half_day_rate" name="half_day_rate" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="full_day_rate" class="form-label">Full Day Rate ($)</label>
+                            <input type="number" class="form-control" id="full_day_rate" name="full_day_rate" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="equipment" class="form-label">Equipment</label>
+                            <textarea class="form-control" id="equipment" name="equipment" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Studio</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateStudioStatus(studioId, isAvailable) {
+    fetch(`/admin/studio/${studioId}/status`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ is_available: isAvailable })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Use Bootstrap toast or alert for better UX
+            const toast = new bootstrap.Toast(document.getElementById('successToast'));
+            toast.show();
+        } else {
+            throw new Error(data.error || 'Failed to update studio status');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Revert the switch state
+        document.getElementById(`studio-${studioId}-status`).checked = !isAvailable;
+        // Show error message
+        const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+        errorToast.show();
+    });
+}
+</script>
+{% endblock %}

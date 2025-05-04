@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Admin Dashboard</h2>
+    
+    <div class="row mt-4">
+        <!-- Statistics -->
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Bookings</h5>
+                    <p class="card-text display-4">{{ stats.total_bookings }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Revenue</h5>
+                    <p class="card-text display-4">${{ stats.total_revenue }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Active Users</h5>
+                    <p class="card-text display-4">{{ stats.active_users }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Reviews</h5>
+                    <p class="card-text display-4">{{ stats.pending_reviews }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Quick Actions</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="{{ url_for('admin.studios') }}" class="btn btn-primary btn-lg w-100 mb-3">
+                                <i class="fas fa-music me-2"></i>Manage Studios
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('admin.bookings') }}" class="btn btn-success btn-lg w-100 mb-3">
+                                <i class="fas fa-calendar me-2"></i>Manage Bookings
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('admin.reviews') }}" class="btn btn-info btn-lg w-100 mb-3">
+                                <i class="fas fa-star me-2"></i>Manage Reviews
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('admin.users') }}" class="btn btn-warning btn-lg w-100 mb-3">
+                                <i class="fas fa-users me-2"></i>Manage Users
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Bookings -->
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4>Recent Bookings</h4>
+            <a href="{{ url_for('admin.bookings') }}" class="btn btn-sm btn-primary">View All</a>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Studio</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in recent_bookings %}
+                    <tr>
+                        <td>{{ booking.id }}</td>
+                        <td>{{ booking.user.email }}</td>
+                        <td>{{ booking.studio.name }}</td>
+                        <td>{{ booking.start_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <span class="badge bg-{{ booking.status }}">{{ booking.status }}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{{ url_for('admin.view_booking', booking_id=booking.id) }}" class="btn btn-sm btn-info">View</a>
+                                {% if booking.status == 'pending' %}
+                                <form method="POST" action="{{ url_for('admin.update_booking_status', booking_id=booking.id) }}" class="d-inline">
+                                    <input type="hidden" name="status" value="confirmed">
+                                    <button type="submit" class="btn btn-sm btn-success">Confirm</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('admin.update_booking_status', booking_id=booking.id) }}" class="d-inline">
+                                    <input type="hidden" name="status" value="cancelled">
+                                    <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
+                                </form>
+                
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-3">
+    <a href="{{ url_for('admin.manage_studios') }}" class="btn btn-primary btn-lg w-100 mb-3">
+        <i class="fas fa-music me-2"></i>Manage Studios
+    </a>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+{% endblock %}

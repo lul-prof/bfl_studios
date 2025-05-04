@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Manage Users</h2>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-10">
+                    <input type="text" class="form-control" name="search" value="{{ search }}" placeholder="Search by email, first name, or last name">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users.items %}
+                        <tr>
+                            <td>{{ user.first_name }} {{ user.last_name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.phone or 'N/A' }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'primary' if user.is_administrator else 'secondary' }}">
+                                    {{ user.role }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if user.is_verified else 'warning' }}">
+                                    {{ 'Verified' if user.is_verified else 'Unverified' }}
+                                </span>
+                            </td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    {% if not user.is_verified %}
+                                    <form method="POST" action="{{ url_for('admin.update_user_status', user_id=user.id) }}" class="d-inline">
+                                        <input type="hidden" name="action" value="verify">
+                                        <button type="submit" class="btn btn-success btn-sm">Verify</button>
+                                    </form>
+                                    {% else %}
+                                    <form method="POST" action="{{ url_for('admin.update_user_status', user_id=user.id) }}" class="d-inline">
+                                        <input type="hidden" name="action" value="unverify">
+                                        <button type="submit" class="btn btn-warning btn-sm">Unverify</button>
+                                    </form>
+                                    {% endif %}
+
+                                    {% if not user.is_administrator %}
+                                    <form method="POST" action="{{ url_for('admin.update_user_status', user_id=user.id) }}" class="d-inline">
+                                        <input type="hidden" name="action" value="make_admin">
+                                        <button type="submit" class="btn btn-primary btn-sm">Make Admin</button>
+                                    </form>
+                                    {% else %}
+                                    <form method="POST" action="{{ url_for('admin.update_user_status', user_id=user.id) }}" class="d-inline">
+                                        <input type="hidden" name="action" value="remove_admin">
+                                        <button type="submit" class="btn btn-danger btn-sm">Remove Admin</button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if users.pages > 1 %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% for page in users.iter_pages() %}
+                        {% if page %}
+                            <li class="page-item {{ 'active' if page == users.page else '' }}">
+                                <a class="page-link" href="{{ url_for('admin.manage_users', page=page, search=search) }}">{{ page }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

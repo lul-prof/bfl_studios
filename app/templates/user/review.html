@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Add Review{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Add Review for Booking #{{ booking.id }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="booking-details mb-4">
+                        <h5>Booking Details:</h5>
+                        <p>Studio: {{ booking.studio.name }}</p>
+                        <p>Date: {{ booking.start_time.strftime('%Y-%m-%d') }}</p>
+                        <p>Time: {{ booking.start_time.strftime('%H:%M') }} - {{ booking.end_time.strftime('%H:%M') }}</p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('user.add_review', booking_id=booking.id) }}">
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Rating</label>
+                            <select class="form-select" id="rating" name="rating" required>
+                                <option value="">Select rating</option>
+                                <option value="5">5 - Excellent</option>
+                                <option value="4">4 - Very Good</option>
+                                <option value="3">3 - Good</option>
+                                <option value="2">2 - Fair</option>
+                                <option value="1">1 - Poor</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">Comment</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Submit Review</button>
+                            <a href="{{ url_for('user.bookings') }}" class="btn btn-secondary">Back to Bookings</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

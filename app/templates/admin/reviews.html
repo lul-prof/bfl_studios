@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Reviews{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Manage Reviews</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Studio</th>
+                            <th>Rating</th>
+                            <th>Comment</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for review in reviews %}
+                        <tr>
+                            <td>{{ review.user.first_name }} {{ review.user.last_name }}</td>
+                            <td>{{ review.booking.studio.name }}</td>
+                            <td>
+                                {% for i in range(review.rating) %}
+                                <i class="fas fa-star text-warning"></i>
+                                {% endfor %}
+                            </td>
+                            <td>{{ review.comment }}</td>
+                            <td>{{ review.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                {% if review.is_approved %}
+                                <span class="badge bg-success">Approved</span>
+                                {% else %}
+                                <span class="badge bg-warning">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if not review.is_approved %}
+                                <form method="POST" action="{{ url_for('admin.approve_review', review_id=review.id) }}">
+                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

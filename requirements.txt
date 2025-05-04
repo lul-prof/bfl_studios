@@ -1,0 +1,18 @@
+# Core Extensions
+Flask-SQLAlchemy         # Database ORM
+Flask-Migrate           # Database migrations
+Flask-Login            # User authentication
+Flask-Mail             # Email functionality
+Flask-WTF              # Form handling
+Flask-Admin            # Admin interface
+Flask-Security         # Advanced security features
+Flask-OAuth            # Social login
+
+# Additional Libraries
+Pillow                 # Image processing
+PyJWT                  # JWT tokens for API
+python-dotenv          # Environment variables
+Werkzeug              # Password hashing
+stripe                 # Payment processing
+africastalking        # SMS notifications (Kenya)
+reportlab             # PDF generation

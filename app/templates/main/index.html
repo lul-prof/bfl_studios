@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to BFL Studios{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="jumbotron text-center my-4">
+        <h1 class="display-4">Welcome to BFL Studios</h1>
+        <p class="lead">Your premier destination for professional music recording and production</p>
+        <hr class="my-4">
+        <p>Book your session today and bring your music to life!</p>
+        <a class="btn btn-primary btn-lg" href="{{ url_for('booking.studios') }}" role="button">Book Now</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Professional Equipment</h5>
+                    <p class="card-text">State-of-the-art recording equipment and instruments at your disposal.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Expert Engineers</h5>
+                    <p class="card-text">Work with our experienced sound engineers to perfect your sound.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Flexible Booking</h5>
+                    <p class="card-text">Choose from hourly, half-day, or full-day sessions to suit your needs.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

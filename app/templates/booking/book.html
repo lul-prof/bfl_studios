@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Book {{ studio.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Book {{ studio.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="studio-details mb-4">
+                        <h5>Studio Details:</h5>
+                        <p>{{ studio.description }}</p>
+                        <ul class="list-unstyled">
+                            <li><strong>Hourly Rate:</strong> ${{ "%.2f"|format(studio.hourly_rate) }}</li>
+                            <li><strong>Half Day Rate:</strong> ${{ "%.2f"|format(studio.half_day_rate) }}</li>
+                            <li><strong>Full Day Rate:</strong> ${{ "%.2f"|format(studio.full_day_rate) }}</li>
+                        </ul>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('booking.book_studio', studio_id=studio.id) }}">
+                        <div class="mb-3">
+                            <label for="booking_type" class="form-label">Booking Type</label>
+                            <select class="form-select" id="booking_type" name="booking_type" required>
+                                <option value="hourly">Hourly</option>
+                                <option value="half_day">Half Day (6 hours)</option>
+                                <option value="full_day">Full Day (12 hours)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="start_time" class="form-label">Start Time</label>
+                            <input type="datetime-local" class="form-control" id="start_time" name="start_time" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="end_time" class="form-label">End Time</label>
+                            <input type="datetime-local" class="form-control" id="end_time" name="end_time" required>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+                            <a href="{{ url_for('booking.studios') }}" class="btn btn-secondary">Back to Studios</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const bookingTypeSelect = document.getElementById('booking_type');
+    const startTimeInput = document.getElementById('start_time');
+    const endTimeInput = document.getElementById('end_time');
+
+    function updateEndTime() {
+        if (!startTimeInput.value) return;
+        
+        const startTime = new Date(startTimeInput.value);
+        let endTime = new Date(startTime);
+        
+        switch(bookingTypeSelect.value) {
+            case 'half_day':
+                endTime.setHours(startTime.getHours() + 6);
+                break;
+            case 'full_day':
+                endTime.setHours(startTime.getHours() + 12);
+                break;
+        }
+        
+        if (bookingTypeSelect.value !== 'hourly') {
+            endTimeInput.value = endTime.toISOString().slice(0, 16);
+            endTimeInput.disabled = true;
+        } else {
+            endTimeInput.disabled = false;
+        }
+    }
+
+    bookingTypeSelect.addEventListener('change', updateEndTime);
+    startTimeInput.addEventListener('change', updateEndTime);
+});
+</script>
+{% endblock %}

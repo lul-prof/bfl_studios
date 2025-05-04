@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Bookings{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Manage Bookings</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Studio</th>
+                            <th>Date & Time</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking.id }}</td>
+                            <td>{{ booking.user.first_name }} {{ booking.user.last_name }}</td>
+                            <td>{{ booking.studio.name }}</td>
+                            <td>
+                                {{ booking.start_time.strftime('%Y-%m-%d') }}<br>
+                                {{ booking.start_time.strftime('%H:%M') }} - {{ booking.end_time.strftime('%H:%M') }}
+                            </td>
+                            <td>{{ booking.booking_type }}</td>
+                            <td>${{ "%.2f"|format(booking.total_amount) }}</td>
+                            <td><span class="badge bg-{{ booking.status }}">{{ booking.status }}</span></td>
+                            <td>
+                                {% if booking.status == 'pending' %}
+                                <form method="POST" action="{{ url_for('admin.update_booking_status', booking_id=booking.id) }}" class="d-inline">
+                                    <input type="hidden" name="status" value="confirmed">
+                                    <button type="submit" class="btn btn-success btn-sm">Confirm</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('admin.update_booking_status', booking_id=booking.id) }}" class="d-inline">
+                                    <input type="hidden" name="status" value="cancelled">
+                                    <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

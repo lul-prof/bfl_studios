@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Payment for Booking #{{ booking.id }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Payment Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="booking-details mb-4">
+                        <h5>Booking Information:</h5>
+                        <p>Studio: {{ booking.studio.name }}</p>
+                        <p>Date: {{ booking.start_time.strftime('%Y-%m-%d') }}</p>
+                        <p>Time: {{ booking.start_time.strftime('%H:%M') }} - {{ booking.end_time.strftime('%H:%M') }}</p>
+                        <p>Total Amount: ${{ "%.2f"|format(booking.total_amount) }}</p>
+                    </div>
+
+                    <div class="payment-methods">
+                        <h5>Select Payment Method:</h5>
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-credit-card"></i> Credit Card
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-mobile-alt"></i> M-Pesa
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fab fa-paypal"></i> PayPal
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
